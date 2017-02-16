@@ -8,6 +8,8 @@
 
 CREATE DATABASE tournament;
 
+\c tournament;
+
 CREATE TABLE player (
     ID      integer PRIMARY KEY,
     Name    varchar(50) NOT NULL
