@@ -6,6 +6,7 @@
 import psycopg2
 
 
+
 def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
     return psycopg2.connect("dbname=tournament")
@@ -33,10 +34,10 @@ def countPlayers():
     cur = co.cursor()
     cur.execute("""SELECT COUNT(id) FROM players""")
     rows = cur.fetchone()
-    cur.close()
+    co.close()
     return rows[0]
 
-def registerPlayer(name):
+def registerPlayer(playername):
     """Adds a player to the tournament database.
   
     The database assigns a unique serial id number for the player.  (This
@@ -47,9 +48,10 @@ def registerPlayer(name):
     """
     co = connect()
     cur = co.cursor()
-    cur.execute("""INSERT INTO player (name) VALUES (name)""")
-    cur.commit()
-    cur.close()
+    cur.execute("""INSERT INTO players VALUES (%d, %r)""" \
+                   % (countPlayers(), playername))
+    co.commit()
+    co.close()
 
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
@@ -68,7 +70,7 @@ def playerStandings():
     cur = co.cursor()
     cur.execute("""SELECT * FROM record""")
     rows = cur.fetchall()
-    cur.close()
+    co.close()
     return rows
 
 def reportMatch(winner, loser):
@@ -80,9 +82,9 @@ def reportMatch(winner, loser):
     """
     co = connect()
     cur = co.cursor()
-    cur.execute("""INSERT INTO matches VALUES (winner, loser)""")
-    cur.commit()
-    cur.close()
+    cur.execute("""INSERT INTO matches VALUES (%r, %r)""" %(winner, loser) )
+    co.commit()
+    co.close()
  
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
@@ -103,11 +105,12 @@ def swissPairings():
     cur = co.cursor()
     cur.execute("""SELECT * FROM matches""")
     data = cur.fetchall()
-    cur.close()
+    co.close()
     record = playerStandings()
+    print record[0]
     result, marked, size = [], {}, countPlayers()
     for detail in record:
-        marked.update({detail[0], False})
+        marked.update({detail[0] : False})
     for i in range(size/2):
         index = 0
         while marked[record[index][0]]:
