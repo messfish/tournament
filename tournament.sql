@@ -14,7 +14,7 @@ CREATE DATABASE tournament;
 
 
 CREATE TABLE players (
-    ID      integer PRIMARY KEY,
+    ID      serial PRIMARY KEY,
     Name    varchar(50) NOT NULL
 );
 

@@ -30,6 +30,7 @@ def deletePlayers():
 
 def countPlayers():
     """Returns the number of players currently registered."""
+    print 1
     co = connect()
     cur = co.cursor()
     cur.execute("""SELECT COUNT(id) FROM players""")
@@ -48,8 +49,7 @@ def registerPlayer(playername):
     """
     co = connect()
     cur = co.cursor()
-    cur.execute("""INSERT INTO players VALUES (%d, %r)""" \
-                   % (countPlayers(), playername))
+    cur.execute("INSERT INTO players (Name) VALUES (%s)" ,(playername,))
     co.commit()
     co.close()
 
@@ -82,7 +82,7 @@ def reportMatch(winner, loser):
     """
     co = connect()
     cur = co.cursor()
-    cur.execute("""INSERT INTO matches VALUES (%r, %r)""" %(winner, loser) )
+    cur.execute("""INSERT INTO matches VALUES (%s, %s)""", (winner, loser) )
     co.commit()
     co.close()
  
